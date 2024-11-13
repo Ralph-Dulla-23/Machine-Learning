@@ -1,71 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Breast Cancer Classifier</title>
+    <title>Text Emotion Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 10px;
+            margin-right: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+    </style>
 </head>
 <body>
-    <h1>Breast Cancer Classifier</h1>
+    <div class="container">
+        <h1>Text Emotion Predictor</h1>
+        <div>
+            <input type="text" id="textInput" placeholder="Enter text here...">
+            <button onclick="predict()">Predict</button>
+        </div>
+        <div id="result"></div>
+    </div>
 
-    <!-- Form to input values for classification -->
-    <form action="/predict" method="POST">
-        <table>
-            <tr>
-                <th>Clump Thickness:</th>
-                <th><input name="clump_thickness" placeholder="Enter Thickness" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Uniformity Cell Size:</th>
-                <th><input name="uniformity_cell_size" placeholder="Enter Cell Size" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Uniformity Cell Shape:</th>
-                <th><input name="uniformity_cell_shape" placeholder="Enter Cell Shape" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Marginal Adhesion:</th>
-                <th><input name="marginal_adhesion" placeholder="Enter Adhesion" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Single Epithelial Cell Size:</th>
-                <th><input name="single_epithelial_cell_size" placeholder="Enter Cell Size" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Bland Chromatin:</th>
-                <th><input name="bland_chromatin" placeholder="Enter Chromatin" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Normal Nucleoli:</th>
-                <th><input name="normal_nucleoli" placeholder="Enter Nucleoli" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Mitoses:</th>
-                <th><input name="mitoses" placeholder="Enter Mitoses" type="text" required></th>
-            </tr>
-            <tr>
-                <th>Classifier:</th>
-                <th>
-                    <input type="radio" id="nearest_neighbor" name="classifier" value="Nearest Neighbor" required>
-                    <label for="nearest_neighbor">Nearest Neighbor</label>
-                    <input type="radio" id="naive_bayes" name="classifier" value="Naive Bayes" required>
-                    <label for="naive_bayes">Naive Bayes</label>
-                    <input type="radio" id="decision_tree" name="classifier" value="Decision Tree" required>
-                    <label for="decision_tree">Decision Tree</label>
-                </th>
-            </tr>
-            <tr>
-                <th colspan="2"><input type="submit" value="Classify"></th>
-            </tr>
-        </table>
-    </form>
-
-    <!-- If there's a prediction, display it -->
-    {% if prediction %}
-    <h2>Prediction Result</h2>
-    <p><strong>Input Values:</strong> {{ inputs }}</p>
-    <p><strong>Classifier Used:</strong> {{ model }}</p>
-    <p><strong>Prediction:</strong> {{ prediction }}</p>
-    {% endif %}
+    <script>
+        function predict() {
+            const text = document.getElementById('textInput').value;
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: text }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `Emotion: ${data.emotion}`;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('result').innerHTML = 'Error occurred during prediction';
+            });
+        }
+    </script>
 </body>
 </html>
